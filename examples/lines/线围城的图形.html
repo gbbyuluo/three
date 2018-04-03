@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            background-color: #000000;
+            margin: 0px;
+            overflow: hidden;
+        }
+
+        a {
+            color:#0078ff;
+        }
+    </style>
+</head>
+<body>
+<script src="../js/three.js"></script>
+
+<script src="../js/Projector.js"></script>
+<script src="../js/CanvasRenderer.js"></script>
+<script>
+    var mouseX=0,mouseY=0,
+        windowHalfX=window.innerWidth/2,
+        windowHalfY=window.innerHeight/2,
+
+        separation=200,//分割
+        amountx=10, //x轴数量
+        amounty=10,//y轴数量
+        camera,scene,renderer,particles, particle;
+    init();
+    animate();
+    function init(){
+        scene=new THREE.Scene();
+        camera=new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight);
+        camera.position.z = 100;
+        camera.lookAt( scene.position );
+
+        renderer=new THREE.CanvasRenderer();
+        renderer.setSize(window.innerWidth,window.innerHeight);
+        document.body.appendChild(renderer.domElement)
+        setGeo()
+
+    }
+    //设置几何体
+    function setGeo(){
+        var PI2 = Math.PI * 2;
+        //设置以圆为材质的圆
+        var material = new THREE.SpriteCanvasMaterial( {
+            color: 0xffffff,
+            program: function ( context ) {
+                context.beginPath();
+                context.arc( 0, 0, 0.5, 0, PI2, true );
+                context.fill();
+            }
+
+        } );
+        var geometry=new THREE.Geometry();
+        for(var i=0;i<100;i++){
+            particle=new THREE.Sprite(material);
+            particle.position.x=Math.random()*10-5;
+            particle.position.y=Math.random()*10-5;
+            particle.position.z=Math.random()*10-5;
+            particle.position.normalize();
+            particle.position.multiplyScalar( Math.random() * 10 + 700 );
+            particle.scale.x = particle.scale.y = 10;
+            scene.add(particle)
+            geometry.vertices.push( particle.position );//将粒子坐标添加到几何对象中
+
+        }
+        var line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.5 } ) );
+        scene.add( line );
+
+//				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+        document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+        document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+
+    }
+    function onDocumentMouseMove(){
+        mouseX=event.clientX-windowHalfX;
+        mouseY=event.clientY-windowHalfY;
+    }
+    function onDocumentTouchStart(){
+        if(event.touches.length>1){
+            event.preventDefault();
+            mouseX=event.touches[0].pageX-windowHalfX;
+            mouseY=event.touches[0].pageY-windowHalfY;
+        }
+    }
+    function onDocumentTouchMove( event ) {
+
+        if ( event.touches.length == 1 ) {
+
+            event.preventDefault();
+
+            mouseX = event.touches[ 0 ].pageX - windowHalfX;
+            mouseY = event.touches[ 0 ].pageY - windowHalfY;
+
+        }
+
+    }
+    function animate(){
+        requestAnimationFrame(animate);
+        camera.position.x += ( mouseX - camera.position.x ) * .05;
+        camera.position.y += ( - mouseY + 200 - camera.position.y ) * .05;
+        camera.lookAt( scene.position );
+        renderer.render(scene,camera)
+    }
+</script>
+</body>
+</html>
