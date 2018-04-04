@@ -32,13 +32,13 @@ buildAuxSystem()
 
 // 设置灯光
 buildLightSystem()
-//设置创建物
-buildbuilding()
+// //设置创建物
+// buildbuilding()
 //设置道路
 buildRoad()
-//设置静态车
-buildStaticCars()
-// 设置动态车
+// //设置静态车
+// buildStaticCars()
+// // 设置动态车
 buildMovingCars()
 
 loop()

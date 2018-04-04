@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/three.js"></script>
+    <script src="./js/utils.js"></script>
+</head>
+<body>
+<script>
+    var   sceneWidth=window.innerWidth,
+        sceneHeight=window.innerHeight;
+    var camera,scene,renderer,tree;
+    init();
+    animate();
+    function init(){
+        scene=new THREE.Scene();
+        camera=new THREE.PerspectiveCamera(45,sceneWidth/sceneHeight,1,10000);
+        camera.position.set(330, 330, 330)
+        camera.lookAt(scene.position)
+        renderer=new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth,window.innerHeight)
+        document.body.appendChild(renderer.domElement);
+        //创建矩形
+        // 设置灯光
+        buildLightSystem()
+         tree = createTree(10, 10, 10)
+        scene.add(tree)
+
+    }
+     function  createTree(x,y,z){
+         var x = x || 0
+         var y = y || 0
+         var z = z || 0
+
+         var tree = new THREE.Object3D()
+         var treeTrunkGeometry = new THREE.BoxBufferGeometry(2, 16, 2)
+         var treeTrunk = utils.makeMesh('lambert', treeTrunkGeometry, 0x8a613a)
+         treeTrunk.position.y = 8
+         tree.add(treeTrunk)
+
+         var treeLeafsGeometry = new THREE.BoxBufferGeometry(8, 8, 8)
+         var treeLeafs = utils.makeMesh('lambert', treeLeafsGeometry, 0x9c9e5d)
+         treeLeafs.position.y = 20
+         tree.add(treeLeafs)
+
+         tree.position.set(x, y, z)
+
+         return tree
+     }
+    function animate(){
+        requestAnimationFrame(animate);
+        tree.rotation.x+=0.01;
+        tree.rotation.y+=0.01;
+        renderer.render(scene,camera);
+    }
+    function buildLightSystem() {
+
+            var directionalLight = new THREE.DirectionalLight(0xffffff, 1.1);
+            directionalLight.position.set(300, 1000, 500);
+            directionalLight.target.position.set(0, 0, 0);
+            directionalLight.castShadow = true;
+
+            var d = 300;
+            directionalLight.shadow.camera = new THREE.OrthographicCamera(-d, d, d, -d, 500, 1600);
+            directionalLight.shadow.bias = 0.0001;
+            directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 1024;
+            scene.add(directionalLight)
+
+            var light = new THREE.AmbientLight(0xffffff, 0.3)
+            scene.add(light)
+    }
+</script>
+</body>
+</html>

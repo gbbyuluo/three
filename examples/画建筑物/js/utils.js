@@ -2,7 +2,6 @@ var utils = {
     //设置阴影
     makeShape: function () {
         var shape
-        console.log(2)
         if (window.THREE && arguments.length) {
             var arry = arguments[0]
             shape = new THREE.Shape()
